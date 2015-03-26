@@ -38,19 +38,25 @@ public abstract class PotionBase implements IPotion
     }
 
     @Override
+    public boolean canBeAppliedTo(ItemStack base)
+    {
+        return base.getItem() == Items.potionitem && base.getItemDamage() == 16;
+    }
+
+    @Override
     public boolean isIngredient(ItemStack potion, ItemStack ingredient)
     {
         return OreDictionary.itemMatches(ingredient, this.ingredient, false);
     }
 
     @Override
-    public boolean isPowerAmplifier(ItemStack potion, ItemStack ingredient)
+    public boolean isPowerAmplifier(PotionData potion, ItemStack ingredient)
     {
         return OreDictionary.itemMatches(ingredient, powerAmp, false);
     }
 
     @Override
-    public boolean isTimeAmplifier(ItemStack potion, ItemStack ingredient)
+    public boolean isTimeAmplifier(PotionData potion, ItemStack ingredient)
     {
         return OreDictionary.itemMatches(ingredient, timeAmp, false);
     }
@@ -129,9 +135,9 @@ public abstract class PotionBase implements IPotion
         }
 
         @Override
-        public boolean isIngredient(ItemStack potion, ItemStack ingredient)
+        public boolean canBeAppliedTo(ItemStack base)
         {
-            return OreDictionary.itemMatches(potion, base, false) && super.isIngredient(potion, ingredient);
+            return OreDictionary.itemMatches(base, this.base, false);
         }
     }
 }

@@ -21,37 +21,46 @@ public interface IPotion
     int getColor(ItemStack potion);
 
     /**
+     * If the passed stack is a valid stack this potion can be brewed into. Used for determining validity of items being placed into the GUI.
+     * 
+     * @param base
+     *            The itemstack to check
+     * @return True if this potion can be applied to the passed stack.
+     */
+    boolean canBeAppliedTo(ItemStack base);
+
+    /**
      * True if this potion can be created from the passed potion and passed ingredient.
      *
-     * @param potion
+     * @param base
      *            The potion the ingredient is being added to. This can be any item, will typically be a water bottle or some other no-effect potion.
      * @param ingredient
      *            The ingredient being added to the potion. Can be any item.
      * @return True if the passed {@link ItemStack ItemStacks} will create this potion.
      */
-    boolean isIngredient(ItemStack potion, ItemStack ingredient);
+    boolean isIngredient(ItemStack base, ItemStack ingredient);
 
     /**
      * This method can be used to finely control the power amplifier.
      * 
      * @param potion
-     *            The current potion stack
+     *            The current potion
      * @param ingredient
      *            The ingredient stack
      * @return True if the passed ingredient can be applied to the passed potion as a power amplifier
      */
-    boolean isPowerAmplifier(ItemStack potion, ItemStack ingredient);
+    boolean isPowerAmplifier(PotionData potion, ItemStack ingredient);
 
     /**
      * This method can be used to finely control the time amplifier.
      * 
      * @param potion
-     *            The current potion stack
+     *            The current potion
      * @param ingredient
      *            The ingredient stack
      * @return True if the passed ingredient can be applied to the passed potion as a time amplifier
      */
-    boolean isTimeAmplifier(ItemStack potion, ItemStack ingredient);
+    boolean isTimeAmplifier(PotionData potion, ItemStack ingredient);
 
     /**
      * The max power level.

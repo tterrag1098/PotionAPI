@@ -2,7 +2,10 @@ package tterrag.potionapi.common;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityBrewingStand;
+import tterrag.core.common.util.TTItemUtils;
 import tterrag.potionapi.api.brewing.IPotion;
+import tterrag.potionapi.api.brewing.PotionUtil;
+import tterrag.potionapi.api.effect.Effect.PotionData;
 import tterrag.potionapi.api.item.IPotionItem;
 import tterrag.potionapi.common.brewing.PotionRegistry;
 
@@ -23,10 +26,10 @@ public class TileBetterBrewing extends TileEntityBrewingStand
             ItemStack base = brewingItemStacks[i];
             if (base != null && base.getItem() instanceof IPotionItem)
             {
-                IPotion potion = ((IPotionItem) base.getItem()).getPotion(base);
-                if (potion != null)
+                PotionData data = PotionUtil.getDataFromNBT(TTItemUtils.getNBTTag(base));
+                if (data.potion != null)
                 {
-                    return ingredient != null && potion.isPowerAmplifier(base, ingredient) || potion.isTimeAmplifier(base, ingredient);
+                    return ingredient != null && data.potion.isPowerAmplifier(data, ingredient) || data.potion.isTimeAmplifier(data, ingredient);
                 }
             }
             for (IPotion potion : PotionRegistry.INSTANCE.getPotions())
@@ -39,4 +42,6 @@ public class TileBetterBrewing extends TileEntityBrewingStand
         }
         return false;
     }
+    
+    
 }

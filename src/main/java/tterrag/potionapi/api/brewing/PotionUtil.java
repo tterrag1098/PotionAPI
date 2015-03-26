@@ -49,4 +49,28 @@ public class PotionUtil
     {
         return tag.getInteger(TIME_LEVEL_KEY);
     }
+
+    public static boolean isItemIngredient(ItemStack base, ItemStack ingredient)
+    {
+        for (IPotion potion : PotionRegistry.INSTANCE.getPotions())
+        {
+            if (potion.isIngredient(base, ingredient))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isItemBase(ItemStack base)
+    {
+        for (IPotion potion : PotionRegistry.INSTANCE.getPotions())
+        {
+            if (potion.canBeAppliedTo(base))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

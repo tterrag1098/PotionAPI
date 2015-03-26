@@ -2,5 +2,4 @@
 ___
 ## Todo
 
-- Override Brewing Stand GUI/Container to allow custom potion ingredients to be added
 - Finish brewing TE logic
