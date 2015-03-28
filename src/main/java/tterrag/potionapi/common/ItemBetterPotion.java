@@ -7,9 +7,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 import tterrag.core.common.util.TTItemUtils;
 import tterrag.potionapi.PotionAPI;
@@ -20,7 +20,7 @@ import tterrag.potionapi.common.brewing.PotionRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemBetterPotion extends ItemPotion implements IPotionItem
+public class ItemBetterPotion extends Item implements IPotionItem
 {
     @SideOnly(Side.CLIENT)
     private IIcon potionIcon;
@@ -89,13 +89,13 @@ public class ItemBetterPotion extends ItemPotion implements IPotionItem
     @Override
     public int getColorFromItemStack(ItemStack stack, int pass)
     {
-        return pass == 0 ? 0xFFFFFF : getPotion(stack).getColor(stack);
+        return pass == 1 ? 0xFFFFFF : getPotion(stack).getColor(stack);
     }
 
     @Override
     public IIcon getIcon(ItemStack stack, int pass)
     {
-        return pass == 0 ? potionIcon : colorIcon;
+        return pass == 0 ? colorIcon : potionIcon;
     }
 
     @Override
@@ -120,6 +120,18 @@ public class ItemBetterPotion extends ItemPotion implements IPotionItem
     public int getRenderPasses(int metadata)
     {
         return 2;
+    }
+
+    @Override
+    public boolean hasEffect(ItemStack par1ItemStack)
+    {
+        return false;
+    }
+    
+    @Override
+    public boolean hasEffect(ItemStack par1ItemStack, int pass)
+    {
+        return pass == 0;
     }
 
     @Override
@@ -155,20 +167,20 @@ public class ItemBetterPotion extends ItemPotion implements IPotionItem
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean p_77624_4_)
     {
         list.add("Power lvl " + getPowerLevel(stack));
-        list.add("Time lvl " + getTimeLevel(stack) + " (" + getPotion(stack).getTimeForLevel(getPowerLevel(stack), getTimeLevel(stack)) + "s)");
+        list.add("Time lvl " + getTimeLevel(stack) + " (" + StringUtils.ticksToElapsedTime(getPotion(stack).getTimeForLevel(getPowerLevel(stack), getTimeLevel(stack))) + ")");
     }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public List getEffects(int p_77834_1_)
-    {
-        return null;
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public List getEffects(ItemStack p_77832_1_)
-    {
-        return null;
-    }
+//    @SuppressWarnings("rawtypes")
+//    @Override
+//    public List getEffects(int p_77834_1_)
+//    {
+//        return null;
+//    }
+//
+//    @SuppressWarnings("rawtypes")
+//    @Override
+//    public List getEffects(ItemStack p_77832_1_)
+//    {
+//        return null;
+//    }
 }

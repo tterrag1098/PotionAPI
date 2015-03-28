@@ -55,7 +55,7 @@ public class ContainerBetterBrewing extends ContainerBrewingStand
                 for (int i = 0; i < 3; i++)
                 {
                     ItemStack stack = ContainerBetterBrewing.this.tileBrewingStand.getStackInSlot(i);
-                    if (stack != null && PotionUtil.isItemIngredient(stack, p_75214_1_))
+                    if (stack != null && PotionUtil.isIngredient(stack, p_75214_1_))
                     {
                         return true;
                     }
@@ -81,7 +81,7 @@ public class ContainerBetterBrewing extends ContainerBrewingStand
             }
             else
             {
-                return PotionUtil.isItemBase(p_75214_1_);
+                return PotionUtil.isBase(p_75214_1_);
             }
         }
     }

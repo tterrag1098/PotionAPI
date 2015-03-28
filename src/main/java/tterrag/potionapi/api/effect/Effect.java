@@ -12,6 +12,16 @@ public class Effect
     {
         public final IPotion potion;
         public final int powerLevel, timeLevel;
+
+        public PotionData incrPower()
+        {
+            return new PotionData(potion, powerLevel + 1, timeLevel);
+        }
+
+        public PotionData incrTime()
+        {
+            return new PotionData(potion, powerLevel, timeLevel + 1);
+        }
     }
 
     private PotionData data;

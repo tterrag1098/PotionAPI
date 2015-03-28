@@ -77,7 +77,7 @@ public interface IPotion
     int getMaxTime();
 
     /**
-     * The duration for the current time level
+     * The duration (in ticks) for the current time level
      * 
      * @param powerLevel
      *            The current power level

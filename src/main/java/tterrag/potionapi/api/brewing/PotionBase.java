@@ -76,7 +76,7 @@ public abstract class PotionBase implements IPotion
     @Override
     public int getTimeForLevel(int powerLevel, int timeLevel)
     {
-        return timeLevel * 120 - powerLevel * 30;
+        return 20 * (timeLevel * 120 - powerLevel * 30);
     }
 
     @Override

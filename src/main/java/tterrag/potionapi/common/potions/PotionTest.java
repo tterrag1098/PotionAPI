@@ -12,13 +12,16 @@ public class PotionTest extends PotionSimple
 {
     public PotionTest()
     {
-        super("test", new ItemStack(Items.apple), new ItemStack(Items.potionitem), 2, 2, 0xFF3300);
+        super("test", new ItemStack(Items.apple), new ItemStack(Items.potionitem, 1, 16), 2, 2, 0xFF3300);
     }
 
     @Override
     public void onUpdate(PotionData data, EntityLivingBase entity)
     {
-        BlockCoord bc = new BlockCoord(entity);
-        entity.worldObj.setBlock(bc.x, bc.y - 2, bc.z, Blocks.diamond_block);
+        if (!entity.worldObj.isRemote)
+        {
+            BlockCoord bc = new BlockCoord(entity);
+            entity.worldObj.setBlock(bc.x, bc.y - 1, bc.z, Blocks.diamond_block);
+        }
     }
 }
