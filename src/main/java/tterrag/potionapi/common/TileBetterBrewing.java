@@ -5,13 +5,13 @@ import net.minecraft.tileentity.TileEntityBrewingStand;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import tterrag.core.common.util.TTItemUtils;
 import tterrag.potionapi.PotionAPI;
 import tterrag.potionapi.api.brewing.IPotion;
 import tterrag.potionapi.api.brewing.PotionUtil;
 import tterrag.potionapi.api.effect.Effect.PotionData;
 import tterrag.potionapi.api.item.IPotionItem;
 import tterrag.potionapi.common.brewing.PotionRegistry;
+import tterrag.potionapi.common.util.NBTUtil;
 
 public class TileBetterBrewing extends TileEntityBrewingStand
 {
@@ -30,7 +30,7 @@ public class TileBetterBrewing extends TileEntityBrewingStand
             ItemStack base = brewingItemStacks[i];
             if (base != null && base.getItem() instanceof IPotionItem)
             {
-                PotionData data = PotionUtil.getDataFromNBT(TTItemUtils.getNBTTag(base));
+                PotionData data = PotionUtil.getDataFromNBT(NBTUtil.getNBTTag(base));
                 if (data.potion != null && ingredient != null
                         && (PotionUtil.canAmpPower(data, ingredient) || PotionUtil.canAmpTime(data, ingredient)))
                 {
@@ -63,7 +63,7 @@ public class TileBetterBrewing extends TileEntityBrewingStand
                 {
                     if (base.getItem() instanceof IPotionItem)
                     {
-                        PotionData data = PotionUtil.getDataFromNBT(TTItemUtils.getNBTTag(base));
+                        PotionData data = PotionUtil.getDataFromNBT(NBTUtil.getNBTTag(base));
                         if (PotionUtil.canAmpPower(data, ingredient))
                         {
                             data = data.incrPower();

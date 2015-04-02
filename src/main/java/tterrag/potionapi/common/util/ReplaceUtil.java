@@ -8,8 +8,6 @@ import java.util.Map;
 import net.minecraft.item.Item;
 import net.minecraft.util.RegistryNamespaced;
 import net.minecraftforge.event.world.WorldEvent;
-import tterrag.core.common.Handlers.Handler;
-import tterrag.core.common.Handlers.Handler.HandlerType;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
@@ -27,7 +25,6 @@ import cpw.mods.fml.relauncher.ReflectionHelper;
  * @author CoFH [<a href=https://github.com/CoFH/CoFHLib/blob/master/src/main/java/cofh/lib/util/RegistryUtils.java>source</a>] under the LGPLv3
  *         License.
  */
-@Handler(HandlerType.FORGE)
 public final class ReplaceUtil
 {
     @SuppressWarnings("unchecked")

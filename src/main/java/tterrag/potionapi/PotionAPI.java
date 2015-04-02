@@ -10,19 +10,15 @@ import net.minecraft.item.ItemReed;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityBrewingStand;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
-import tterrag.core.IModTT;
-import tterrag.core.common.Handlers.Handler;
-import tterrag.core.common.Handlers.Handler.HandlerType;
-import tterrag.core.common.Handlers.Handler.Inst;
+import tterrag.potionapi.api.effect.EffectUtil;
 import tterrag.potionapi.client.GuiBetterBrewing;
 import tterrag.potionapi.common.BlockBetterBrewing;
 import tterrag.potionapi.common.ContainerBetterBrewing;
 import tterrag.potionapi.common.ItemBetterPotion;
 import tterrag.potionapi.common.TileBetterBrewing;
-import tterrag.potionapi.common.brewing.PotionRegistry;
 import tterrag.potionapi.common.effect.EffectData;
-import tterrag.potionapi.common.potions.PotionTest;
 import tterrag.potionapi.common.util.ReplaceUtil;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -36,8 +32,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import static tterrag.potionapi.PotionAPI.*;
 
 @Mod(modid = MODID, name = NAME, version = VERSION, dependencies = "after:ttCore")
-@Handler(value = HandlerType.FORGE, getInstFrom = Inst.FIELD)
-public class PotionAPI implements IModTT, IGuiHandler
+public class PotionAPI implements IGuiHandler
 {
     public static final String MODID = "potionapi";
     public static final String NAME = "PotionAPI";
@@ -52,6 +47,9 @@ public class PotionAPI implements IModTT, IGuiHandler
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        MinecraftForge.EVENT_BUS.register(INSTANCE);
+        MinecraftForge.EVENT_BUS.register(new ReplaceUtil());
+        MinecraftForge.EVENT_BUS.register(new EffectUtil());
         NetworkRegistry.INSTANCE.registerGuiHandler(this, INSTANCE);
 
         potion = new ItemBetterPotion();
@@ -63,8 +61,6 @@ public class PotionAPI implements IModTT, IGuiHandler
         ReplaceUtil.overwriteEntry(Block.blockRegistry, "minecraft:brewing_stand", brewingStand);
 
         GameRegistry.registerTileEntity(TileBetterBrewing.class, "tileBetterBrewing");
-
-        PotionRegistry.INSTANCE.registerPotion(new PotionTest());
     }
 
     @SubscribeEvent
@@ -74,24 +70,6 @@ public class PotionAPI implements IModTT, IGuiHandler
         {
             event.entity.registerExtendedProperties(EffectData.IDENT, new EffectData());
         }
-    }
-
-    @Override
-    public String modid()
-    {
-        return MODID;
-    }
-
-    @Override
-    public String name()
-    {
-        return NAME;
-    }
-
-    @Override
-    public String version()
-    {
-        return VERSION;
     }
 
     @Override

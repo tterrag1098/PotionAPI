@@ -6,9 +6,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.oredict.OreDictionary;
-import tterrag.core.common.util.TTItemUtils;
 import tterrag.potionapi.api.effect.Effect;
 import tterrag.potionapi.api.effect.Effect.PotionData;
+import tterrag.potionapi.common.util.NBTUtil;
 
 @AllArgsConstructor
 public abstract class PotionBase implements IPotion
@@ -82,7 +82,7 @@ public abstract class PotionBase implements IPotion
     @Override
     public Effect createEffect(ItemStack potion, EntityLivingBase entity)
     {
-        PotionData data = PotionUtil.getDataFromNBT(TTItemUtils.getNBTTag(potion));
+        PotionData data = PotionUtil.getDataFromNBT(NBTUtil.getNBTTag(potion));
         return new Effect(data, getTimeForLevel(data.powerLevel, data.timeLevel));
     }
 

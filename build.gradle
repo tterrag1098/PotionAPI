@@ -22,17 +22,6 @@ minecraft {
     replaceIn "PotionAPI.java"
 }
 
-repositories {
-    maven { // ttCore
-        name 'tterrag Repo'
-        url "http://maven.tterrag.com"
-    }
-}
-
-dependencies {
-    compile "tterrag.core:ttCore:MC${minecraft_version}-${ttCore_version}:deobf"
-}
-
 processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version

@@ -11,12 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
-import tterrag.core.common.util.TTItemUtils;
 import tterrag.potionapi.PotionAPI;
 import tterrag.potionapi.api.brewing.IPotion;
 import tterrag.potionapi.api.brewing.PotionUtil;
 import tterrag.potionapi.api.item.IPotionItem;
 import tterrag.potionapi.common.brewing.PotionRegistry;
+import tterrag.potionapi.common.util.NBTUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -47,25 +47,25 @@ public class ItemBetterPotion extends Item implements IPotionItem
     @Override
     public void setPotion(ItemStack stack, IPotion potion, int powerLevel, int timeLevel)
     {
-        PotionUtil.writePotionNBT(TTItemUtils.getNBTTag(stack), potion, powerLevel, timeLevel);
+        PotionUtil.writePotionNBT(NBTUtil.getNBTTag(stack), potion, powerLevel, timeLevel);
     }
 
     @Override
     public IPotion getPotion(ItemStack stack)
     {
-        return PotionUtil.getPotionFromNBT(TTItemUtils.getNBTTag(stack));
+        return PotionUtil.getPotionFromNBT(NBTUtil.getNBTTag(stack));
     }
 
     @Override
     public int getPowerLevel(ItemStack stack)
     {
-        return PotionUtil.getPowerLevelFromNBT(TTItemUtils.getNBTTag(stack));
+        return PotionUtil.getPowerLevelFromNBT(NBTUtil.getNBTTag(stack));
     }
 
     @Override
     public int getTimeLevel(ItemStack stack)
     {
-        return PotionUtil.getTimeLevelFromNBT(TTItemUtils.getNBTTag(stack));
+        return PotionUtil.getTimeLevelFromNBT(NBTUtil.getNBTTag(stack));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -79,7 +79,7 @@ public class ItemBetterPotion extends Item implements IPotionItem
                 for (int timeLevel = 1; timeLevel <= potion.getMaxTime(); timeLevel++)
                 {
                     ItemStack stack = new ItemStack(item);
-                    PotionUtil.writePotionNBT(TTItemUtils.getNBTTag(stack), potion, powerLevel, timeLevel);
+                    PotionUtil.writePotionNBT(NBTUtil.getNBTTag(stack), potion, powerLevel, timeLevel);
                     list.add(stack);
                 }
             }

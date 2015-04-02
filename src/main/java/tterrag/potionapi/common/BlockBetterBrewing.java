@@ -1,5 +1,6 @@
 package tterrag.potionapi.common;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockBrewingStand;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -28,5 +29,20 @@ public class BlockBetterBrewing extends BlockBrewingStand
     {
         player.openGui(PotionAPI.INSTANCE, 0, world, x, y, z);
         return true;
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block p_149749_5_, int p_149749_6_)
+    {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof TileBetterBrewing)
+        {
+            TileBetterBrewing stand = (TileBetterBrewing) te;
+            for (int i = 0; i < stand.getSizeInventory(); i++)
+            {
+                dropBlockAsItem(world, x, y, z, stand.getStackInSlot(i));
+            }
+        }
+        world.removeTileEntity(x, y, z);
     }
 }
