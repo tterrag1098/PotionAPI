@@ -1,17 +1,21 @@
 package tterrag.potionapi.api.effect;
 
-import lombok.AllArgsConstructor;
 import net.minecraft.entity.EntityLivingBase;
 import tterrag.potionapi.api.brewing.IPotion;
 
-@AllArgsConstructor
 public class Effect
 {
-    @AllArgsConstructor
     public static class PotionData
     {
         public final IPotion potion;
         public final int powerLevel, timeLevel;
+
+        public PotionData(IPotion potion, int powerLevel, int timeLevel)
+        {
+            this.potion = potion;
+            this.powerLevel = powerLevel;
+            this.timeLevel = timeLevel;
+        }
 
         public PotionData incrPower()
         {
@@ -26,6 +30,12 @@ public class Effect
 
     private PotionData data;
     private int timeRemaining;
+
+    public Effect(PotionData data, int timeRemaining)
+    {
+        this.data = data;
+        this.timeRemaining = timeRemaining;
+    }
 
     public int getTimeRemaining()
     {

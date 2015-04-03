@@ -2,8 +2,11 @@ package tterrag.potionapi.api.brewing;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import tterrag.potionapi.api.effect.Effect;
 import tterrag.potionapi.api.effect.Effect.PotionData;
 
@@ -16,7 +19,7 @@ public interface IPotion
      */
     String getIdentifier();
 
-    String getLocalizedName(ItemStack potion);
+    String getLocalizedName(PotionData data);
 
     int getColor(ItemStack potion);
 
@@ -86,6 +89,25 @@ public interface IPotion
      * @return A time, in seconds
      */
     int getTimeForLevel(int powerLevel, int timeLevel);
+
+    /**
+     * Called when this potion renders on the player's GUI, so that custom effects may be rendered.
+     * 
+     * @param player
+     *            The client player
+     * @param data
+     *            The current effect
+     */
+    void renderHook(EntityPlayer player, PotionData data);
+
+    /**
+     * Register and return this potion's icon for inventory rendering.
+     * 
+     * @param register
+     *            The IIconRegister instance
+     * @return The potion's icon
+     */
+    IIcon getIcon(IIconRegister register);
 
     @Nullable
     Effect createEffect(ItemStack potion, EntityLivingBase entity);

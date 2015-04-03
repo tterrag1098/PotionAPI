@@ -1,5 +1,6 @@
 package tterrag.potionapi.common.effect;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,8 +31,24 @@ public class EffectData implements IExtendedEntityProperties
 
     public void addEffect(Effect effect)
     {
-        effects.add(effect);
-        effect.onApplied(entity);
+        int idx = -1;
+        for (int i = 0; i < effects.size(); i++)
+        {
+            if (effect.getPotionData().potion == effects.get(i).getPotionData().potion)
+            {
+                idx = i;
+                break;
+            }
+        }
+        if (idx >= 0)
+        {
+            effects.set(idx, effect);
+        }
+        else
+        {
+            effects.add(effect);
+            effect.onApplied(entity);
+        }
     }
 
     public void tickEffects()
@@ -87,7 +104,13 @@ public class EffectData implements IExtendedEntityProperties
     @Override
     public void loadNBTData(NBTTagCompound compound)
     {
-        NBTTagList list = compound.getTagList(LIST_KEY, Constants.NBT.TAG_COMPOUND);
+        readFromNBT(compound);
+    }
+
+    public void readFromNBT(NBTTagCompound tag)
+    {
+        effects.clear();
+        NBTTagList list = tag.getTagList(LIST_KEY, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++)
         {
             NBTTagCompound base = list.getCompoundTagAt(i);
@@ -96,6 +119,11 @@ public class EffectData implements IExtendedEntityProperties
             PotionData data = PotionUtil.getDataFromNBT(potionTag);
             effects.add(new Effect(data, time));
         }
+    }
+    
+    public Collection<Effect> getActiveEffects()
+    {
+        return effects;
     }
 
     public static EffectData getInstance(EntityLivingBase entity)

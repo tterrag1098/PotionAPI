@@ -1,16 +1,17 @@
 package tterrag.potionapi.api.brewing;
 
-import lombok.AllArgsConstructor;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.oredict.OreDictionary;
 import tterrag.potionapi.api.effect.Effect;
 import tterrag.potionapi.api.effect.Effect.PotionData;
 import tterrag.potionapi.common.util.NBTUtil;
 
-@AllArgsConstructor
 public abstract class PotionBase implements IPotion
 {
     private String identifier;
@@ -19,6 +20,17 @@ public abstract class PotionBase implements IPotion
     private int maxPower, maxTime;
     private int color;
 
+    protected PotionBase(String identifier, ItemStack ingredient, ItemStack powerAmp, ItemStack timeAmp, int maxPower, int maxTime, int color)
+    {
+        this.identifier = identifier;
+        this.ingredient = ingredient;
+        this.powerAmp = powerAmp;
+        this.timeAmp = timeAmp;
+        this.maxPower = maxPower;
+        this.maxTime = maxTime;
+        this.color = color;
+    }
+
     @Override
     public String getIdentifier()
     {
@@ -26,7 +38,7 @@ public abstract class PotionBase implements IPotion
     }
 
     @Override
-    public String getLocalizedName(ItemStack stack)
+    public String getLocalizedName(PotionData data)
     {
         return StatCollector.translateToLocal("potion." + identifier + ".name");
     }
@@ -80,6 +92,12 @@ public abstract class PotionBase implements IPotion
     }
 
     @Override
+    public void renderHook(EntityPlayer player, PotionData data)
+    {
+        ;
+    }
+
+    @Override
     public Effect createEffect(ItemStack potion, EntityLivingBase entity)
     {
         PotionData data = PotionUtil.getDataFromNBT(NBTUtil.getNBTTag(potion));
@@ -115,6 +133,12 @@ public abstract class PotionBase implements IPotion
         public void onUpdate(PotionData data, EntityLivingBase entity)
         {
             ;
+        }
+        
+        @Override
+        public IIcon getIcon(IIconRegister register)
+        {
+            return null;
         }
     }
 
