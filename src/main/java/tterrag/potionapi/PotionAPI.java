@@ -121,8 +121,6 @@ public class PotionAPI implements IGuiHandler
                 if ("clear".equals(event.parameters[1]))
                 {
                     EffectUtil.clearEffects(player);
-                    CommandBase.func_152373_a(event.sender, event.command, "commands.effect.success.removed.all", player.getCommandSenderName());
-                    event.setCanceled(true);
                 }
                 else
                 {
