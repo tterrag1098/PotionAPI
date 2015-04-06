@@ -3,6 +3,7 @@ package tterrag.potionapi.common;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBrewingStand;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import tterrag.potionapi.PotionAPI;
@@ -40,7 +41,11 @@ public class BlockBetterBrewing extends BlockBrewingStand
             TileBetterBrewing stand = (TileBetterBrewing) te;
             for (int i = 0; i < stand.getSizeInventory(); i++)
             {
-                dropBlockAsItem(world, x, y, z, stand.getStackInSlot(i));
+                ItemStack stack = stand.getStackInSlot(i);
+                if (stack != null)
+                {
+                    dropBlockAsItem(world, x, y, z, stack);
+                }
             }
         }
         world.removeTileEntity(x, y, z);
