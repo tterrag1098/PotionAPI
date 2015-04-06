@@ -1,12 +1,15 @@
 package tterrag.potionapi.api.brewing;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import tterrag.potionapi.api.brewing.PotionBase.PotionNoEffect;
 import tterrag.potionapi.api.effect.Effect;
-import tterrag.potionapi.api.effect.Effect.PotionData;
 import tterrag.potionapi.api.effect.EffectUtil;
+import tterrag.potionapi.api.effect.PotionData;
 import tterrag.potionapi.common.brewing.PotionRegistry;
+import tterrag.potionapi.common.util.NBTUtil;
 
 public class PotionUtil
 {
@@ -14,9 +17,14 @@ public class PotionUtil
     public static final String POWER_LEVEL_KEY = "potionpower";
     public static final String TIME_LEVEL_KEY = "potiontime";
 
-    public static void applyPotion(IPotion potion, ItemStack stack, EntityLivingBase entity)
+    public static void applyPotion(ItemStack stack, EntityLivingBase entity)
     {
-        Effect effect = potion.createEffect(stack, entity);
+        applyPotion(getDataFromNBT(NBTUtil.getNBTTag(stack)), entity);
+    }
+
+    public static void applyPotion(PotionData data, EntityLivingBase entity)
+    {
+        Effect effect = data.potion.createEffect(data, entity);
         if (effect != null)
         {
             EffectUtil.applyEffect(effect, entity);
@@ -42,7 +50,8 @@ public class PotionUtil
 
     public static IPotion getPotionFromNBT(NBTTagCompound tag)
     {
-        return PotionRegistry.INSTANCE.getPotionByID(tag.getString(NAME_KEY));
+        IPotion potion = PotionRegistry.INSTANCE.getPotionByID(tag.getString(NAME_KEY));
+        return potion != null ? potion : new PotionNoEffect("BROKEN", new ItemStack(Items.diamond), 0);
     }
 
     public static int getPowerLevelFromNBT(NBTTagCompound tag)

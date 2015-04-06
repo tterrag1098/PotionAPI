@@ -6,9 +6,10 @@ import net.minecraft.tileentity.TileEntityBrewingStand;
 import org.apache.commons.lang3.ArrayUtils;
 
 import tterrag.potionapi.PotionAPI;
+import tterrag.potionapi.api.brewing.BrewingType;
 import tterrag.potionapi.api.brewing.IPotion;
 import tterrag.potionapi.api.brewing.PotionUtil;
-import tterrag.potionapi.api.effect.Effect.PotionData;
+import tterrag.potionapi.api.effect.PotionData;
 import tterrag.potionapi.api.item.IPotionItem;
 import tterrag.potionapi.common.brewing.PotionRegistry;
 import tterrag.potionapi.common.util.NBTUtil;
@@ -64,28 +65,36 @@ public class TileBetterBrewing extends TileEntityBrewingStand
                     if (base.getItem() instanceof IPotionItem)
                     {
                         PotionData data = PotionUtil.getDataFromNBT(NBTUtil.getNBTTag(base));
+                        PotionData oldData = data;
+                        PotionData newData = null;
                         if (PotionUtil.canAmpPower(data, ingredient))
                         {
                             data = data.incrPower();
+                            newData = data.potion.onBrewed(BrewingType.POWER_INCREASE, oldData, data);
                             changed[i] = true;
                         }
                         if (PotionUtil.canAmpTime(data, ingredient))
                         {
                             data = data.incrTime();
+                            newData = data.potion.onBrewed(BrewingType.TIME_INCREASE, oldData, data);
                             changed[i] = true;
                         }
+                        data = newData != null ? newData : data;
                         if (changed[i])
                         {
                             PotionUtil.writePotionNBT(base.stackTagCompound, data);
                         }
                     }
-                    else if (!changed[i])
+                    if (!changed[i])
                     {
                         IPotion res = PotionUtil.getResult(base, ingredient);
                         if (res != null)
                         {
                             ItemStack newPotion = new ItemStack(PotionAPI.potion);
-                            ((IPotionItem) newPotion.getItem()).setPotion(newPotion, res, 1, 1);
+                            PotionData data = new PotionData(res, 1, 1);
+                            PotionData newData = res.onBrewed(BrewingType.POTION, null, data);
+                            data = newData != null ? newData : data;
+                            ((IPotionItem) newPotion.getItem()).setPotion(newPotion, data);
                             this.brewingItemStacks[i] = newPotion;
                             changed[i] = true;
                         }

@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -24,7 +25,6 @@ import org.lwjgl.opengl.GL11;
 
 import tterrag.potionapi.PotionAPI;
 import tterrag.potionapi.api.brewing.IPotion;
-import tterrag.potionapi.api.effect.Effect.PotionData;
 import tterrag.potionapi.common.brewing.PotionRegistry;
 import tterrag.potionapi.common.effect.EffectData;
 import tterrag.potionapi.common.effect.MessageEffect;
@@ -33,6 +33,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class EffectUtil
 {
@@ -102,11 +103,8 @@ public class EffectUtil
                         gui.drawTexturedModelRectFromIcon(x + 6, y + 7, potionIcon, 18, 18);
                     }
 
-                    String s = I18n.format(potion.getLocalizedName(data), new Object[0]);
-                    if (data.powerLevel > 1)
-                    {
-                        s += " " + I18n.format("enchantment.level." + data.powerLevel);
-                    }
+                    String s = I18n.format(effect.getLocalizedName(), new Object[0]);
+                    s = appendLevel(s, data);
 
                     FontRenderer fnt = Minecraft.getMinecraft().fontRenderer;
                     fnt.drawStringWithShadow(s, x + 10 + 18, y + 6, 16777215);
@@ -114,6 +112,21 @@ public class EffectUtil
                 }
             }
         }
+    }
+
+    public static String appendLevel(String s, PotionData data)
+    {
+        if (data.powerLevel > 1)
+        {
+            s += " " + StatCollector.translateToLocal("enchantment.level." + data.powerLevel);
+        }
+        return s;
+    }
+        
+    @SubscribeEvent
+    public void onPlayerTick(PlayerTickEvent event)
+    {
+        
     }
 
     @SubscribeEvent

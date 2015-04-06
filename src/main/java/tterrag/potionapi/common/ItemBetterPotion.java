@@ -14,6 +14,9 @@ import net.minecraft.world.World;
 import tterrag.potionapi.PotionAPI;
 import tterrag.potionapi.api.brewing.IPotion;
 import tterrag.potionapi.api.brewing.PotionUtil;
+import tterrag.potionapi.api.effect.Effect;
+import tterrag.potionapi.api.effect.EffectUtil;
+import tterrag.potionapi.api.effect.PotionData;
 import tterrag.potionapi.api.item.IPotionItem;
 import tterrag.potionapi.common.brewing.PotionRegistry;
 import tterrag.potionapi.common.util.NBTUtil;
@@ -45,9 +48,14 @@ public class ItemBetterPotion extends Item implements IPotionItem
     }
 
     @Override
-    public void setPotion(ItemStack stack, IPotion potion, int powerLevel, int timeLevel)
+    public void setPotion(ItemStack stack, PotionData data)
     {
-        PotionUtil.writePotionNBT(NBTUtil.getNBTTag(stack), potion, powerLevel, timeLevel);
+        PotionUtil.writePotionNBT(NBTUtil.getNBTTag(stack), data);
+    }
+
+    public PotionData getData(ItemStack stack)
+    {
+        return PotionUtil.getDataFromNBT(NBTUtil.getNBTTag(stack));
     }
 
     @Override
@@ -127,7 +135,7 @@ public class ItemBetterPotion extends Item implements IPotionItem
     {
         return false;
     }
-    
+
     @Override
     public boolean hasEffect(ItemStack par1ItemStack, int pass)
     {
@@ -162,32 +170,34 @@ public class ItemBetterPotion extends Item implements IPotionItem
     @Override
     public ItemStack onEaten(ItemStack stack, World world, EntityPlayer player)
     {
-        PotionUtil.applyPotion(getPotion(stack), stack, player);
+        PotionUtil.applyPotion(stack, player);
         stack.stackSize--;
         return stack.stackSize <= 0 ? null : stack;
     }
 
-    // Let's get rid of that pesky ItemPotion stuff
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean p_77624_4_)
     {
-        list.add("Power lvl " + getPowerLevel(stack));
-        list.add("Time lvl " + getTimeLevel(stack) + " (" + StringUtils.ticksToElapsedTime(getPotion(stack).getTimeForLevel(getPowerLevel(stack), getTimeLevel(stack))) + ")");
+        PotionData data = getData(stack);
+        Effect effect = data.potion.createEffect(data, null);
+        String desc = effect.getLocalizedName();
+        desc = EffectUtil.appendLevel(desc, data);
+        desc += " (" + StringUtils.ticksToElapsedTime(getPotion(stack).getTimeForLevel(getPowerLevel(stack), getTimeLevel(stack))) + ")";
+        list.add(desc);
     }
 
-//    @SuppressWarnings("rawtypes")
-//    @Override
-//    public List getEffects(int p_77834_1_)
-//    {
-//        return null;
-//    }
-//
-//    @SuppressWarnings("rawtypes")
-//    @Override
-//    public List getEffects(ItemStack p_77832_1_)
-//    {
-//        return null;
-//    }
+    // @SuppressWarnings("rawtypes")
+    // @Override
+    // public List getEffects(int p_77834_1_)
+    // {
+    // return null;
+    // }
+    //
+    // @SuppressWarnings("rawtypes")
+    // @Override
+    // public List getEffects(ItemStack p_77832_1_)
+    // {
+    // return null;
+    // }
 }

@@ -15,9 +15,11 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import tterrag.potionapi.api.brewing.IPotion;
 import tterrag.potionapi.api.brewing.PotionBase.PotionSimple;
-import tterrag.potionapi.api.effect.Effect.PotionData;
 import tterrag.potionapi.api.effect.EffectUtil;
+import tterrag.potionapi.api.effect.PotionData;
 import tterrag.potionapi.client.GuiBetterBrewing;
 import tterrag.potionapi.common.BlockBetterBrewing;
 import tterrag.potionapi.common.CommonProxy;
@@ -39,6 +41,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+
 import static tterrag.potionapi.PotionAPI.*;
 
 @Mod(modid = MODID, name = NAME, version = VERSION, dependencies = "after:ttCore")
@@ -53,10 +56,10 @@ public class PotionAPI implements IGuiHandler
 
     @Instance
     public static PotionAPI INSTANCE;
-    
+
     @SidedProxy(clientSide = "tterrag.potionapi.client.ClientProxy", serverSide = "tterrag.potionapi.common.CommonProxy")
     public static CommonProxy proxy;
-    
+
     public static final SimpleNetworkWrapper PACKET_HANDLER = new SimpleNetworkWrapper(MODID);
 
     @EventHandler
@@ -79,21 +82,9 @@ public class PotionAPI implements IGuiHandler
 
         GameRegistry.registerTileEntity(TileBetterBrewing.class, "tileBetterBrewing");
 
-        PotionRegistry.INSTANCE.registerPotion(new PotionSimple("test", new ItemStack(Items.diamond), new ItemStack(Items.potionitem, 1, 16), 5, 3,
-                0xFF0000)
-        {
-            @Override
-            public void onUpdate(PotionData data, EntityLivingBase entity)
-            {
-                entity.motionY += 0.01f * data.powerLevel;
-            }
-
-            @Override
-            public IIcon getIcon(IIconRegister register)
-            {
-                return register.registerIcon("potionapi:potionicon");
-            }
-        });
+        IPotion leaping = new PotionLeaping();
+        MinecraftForge.EVENT_BUS.register(leaping);
+        PotionRegistry.INSTANCE.registerPotion(leaping);
     }
 
     @SubscribeEvent
@@ -125,5 +116,29 @@ public class PotionAPI implements IGuiHandler
             return new GuiBetterBrewing(player.inventory, (TileEntityBrewingStand) world.getTileEntity(x, y, z));
         }
         return null;
+    }
+
+    public static class PotionLeaping extends PotionSimple
+    {
+        private PotionLeaping()
+        {
+            super("leaping", new ItemStack(Items.slime_ball), new ItemStack(Items.potionitem, 1, 16), 0x22FF4C);
+        }
+
+        @Override
+        public IIcon getIcon(IIconRegister register)
+        {
+            return register.registerIcon("potionapi:potionicon");
+        }
+
+        @SubscribeEvent
+        public void onLivingJump(LivingJumpEvent event)
+        {
+            PotionData data = EffectData.getPotionData(event.entityLiving, this);
+            if (data != null)
+            {
+                event.entityLiving.motionY += data.powerLevel * 0.1F;
+            }
+        }
     }
 }

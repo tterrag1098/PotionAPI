@@ -13,9 +13,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.util.Constants;
 import tterrag.potionapi.PotionAPI;
+import tterrag.potionapi.api.brewing.IPotion;
 import tterrag.potionapi.api.brewing.PotionUtil;
 import tterrag.potionapi.api.effect.Effect;
-import tterrag.potionapi.api.effect.Effect.PotionData;
+import tterrag.potionapi.api.effect.PotionData;
 
 import com.google.common.collect.Lists;
 
@@ -129,5 +130,18 @@ public class EffectData implements IExtendedEntityProperties
     public static EffectData getInstance(EntityLivingBase entity)
     {
         return (EffectData) entity.getExtendedProperties(IDENT);
+    }
+
+    public static PotionData getPotionData(EntityLivingBase entity, IPotion potion)
+    {
+        EffectData ed = getInstance(entity);
+        for (Effect e : ed.getActiveEffects())
+        {
+            if (e.getPotionData().potion == potion)
+            {
+                return e.getPotionData();
+            }
+        }
+        return null;
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import tterrag.potionapi.api.effect.Effect;
-import tterrag.potionapi.api.effect.Effect.PotionData;
+import tterrag.potionapi.api.effect.PotionData;
 
 public interface IPotion
 {
@@ -66,6 +66,23 @@ public interface IPotion
     boolean isTimeAmplifier(PotionData potion, ItemStack ingredient);
 
     /**
+     * A hook for special behavior when this potion is brewed. Can be used to decrement other stats when one stat is changed (e.g. vanilla potion
+     * behavior).
+     * 
+     * @param type
+     *            The {@link BrewingType type} of brewing that is occuring
+     * @param oldData
+     *            The data of the potion before it was brewed. This can be null if the old ItemStack is not a potion, e.g. in the
+     *            {@link BrewingType#POTION} case.
+     * @param newData
+     *            The future data of the potion after it is brewed. Returning a non-null PotionData from this method will override these values.
+     * @return A PotionData representing the properties of this potion after it is brewed. Return {@code null} or {@code newData} to maintain default
+     *         behavior.
+     */
+    @Nullable
+    PotionData onBrewed(BrewingType type, @Nullable PotionData oldData, PotionData newData);
+
+    /**
      * The max power level.
      * 
      * @return The amount of times a power amplifier can be applied
@@ -109,8 +126,17 @@ public interface IPotion
      */
     IIcon getIcon(IIconRegister register);
 
+    /**
+     * Create an {@link Effect} for the current potion data.
+     * 
+     * @param data
+     *            Current potion data.
+     * @param entity
+     *            The entity the effect is being applied to. Can be null for use in tooltips, etc.
+     * @return An {@link Effect} to apply to the given entity.
+     */
     @Nullable
-    Effect createEffect(ItemStack potion, EntityLivingBase entity);
+    Effect createEffect(PotionData data, @Nullable EntityLivingBase entity);
 
     void onApplied(PotionData data, EntityLivingBase entity);
 
