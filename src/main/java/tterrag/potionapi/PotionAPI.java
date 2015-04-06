@@ -2,22 +2,29 @@ package tterrag.potionapi;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemReed;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityBrewingStand;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import tterrag.potionapi.api.brewing.IPotion;
 import tterrag.potionapi.api.brewing.PotionBase.PotionSimple;
+import tterrag.potionapi.api.effect.Effect;
 import tterrag.potionapi.api.effect.EffectUtil;
 import tterrag.potionapi.api.effect.PotionData;
 import tterrag.potionapi.client.GuiBetterBrewing;
@@ -96,6 +103,70 @@ public class PotionAPI implements IGuiHandler
         }
     }
 
+    @SubscribeEvent
+    public void onCommand(CommandEvent event)
+    {
+        try
+        {
+            // My eyes!
+            if (event.command.getCommandName().equals("effect") && event.parameters.length >= 2)
+            {
+                EntityPlayerMP player = CommandBase.getPlayer(event.sender, event.parameters[0]);
+                IPotion potion = PotionRegistry.INSTANCE.getPotionByID(event.parameters[1]);
+                EffectData inst = EffectData.getInstance(player);
+                if (player == null)
+                {
+                    return;
+                }
+                if ("clear".equals(event.parameters[1]))
+                {
+                    EffectUtil.clearEffects(player);
+                    CommandBase.func_152373_a(event.sender, event.command, "commands.effect.success.removed.all", player.getCommandSenderName());
+                    event.setCanceled(true);
+                }
+                else
+                {
+                    if (potion == null)
+                    {
+                        return;
+                    }
+                    int seconds = event.parameters.length > 2 ? CommandBase.parseIntWithMin(event.sender, event.parameters[2], 0) : 30;
+                    int level = event.parameters.length > 3 ? CommandBase.parseIntWithMin(event.sender, event.parameters[3], 0) + 1 : 1;
+                    Effect effect = new Effect(new PotionData(potion, level, 1), seconds * 20);
+                    if (seconds > 0)
+                    {
+                        CommandBase.func_152373_a(event.sender, event.command, "commands.effect.success",
+                                new ChatComponentText(effect.getLocalizedName()), '"' + potion.getIdentifier() + '"', level,
+                                player.getCommandSenderName(), seconds);
+                        EffectUtil.applyEffect(effect, player);
+                        event.setCanceled(true);
+                    }
+                    else
+                    {
+                        if (EffectData.getPotionData(player, potion) == null)
+                        {
+                            throw new CommandException("commands.effect.failure.notActive", new ChatComponentText(potion.getLocalizedName(effect
+                                    .getPotionData())), player.getCommandSenderName());
+                        }
+
+                        EffectUtil.removeEffect(potion, player);
+                        CommandBase.func_152373_a(event.sender, event.command, "commands.effect.success.removed",
+                                new ChatComponentText(potion.getLocalizedName(effect.getPotionData())), player.getCommandSenderName());
+                        event.setCanceled(true);
+                    }
+                }
+                NBTTagCompound tag = new NBTTagCompound();
+                inst.saveNBTData(tag);
+                PACKET_HANDLER.sendToDimension(new MessageEffect(player, tag), player.worldObj.provider.dimensionId);
+            }
+        }
+        catch (Exception e)
+        {
+            event.exception = e;
+            event.setCanceled(true);
+        }
+    }
+
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
@@ -128,7 +199,7 @@ public class PotionAPI implements IGuiHandler
         @Override
         public IIcon getIcon(IIconRegister register)
         {
-            return register.registerIcon("potionapi:potionicon");
+            return register.registerIcon("potionapi:leaping");
         }
 
         @SubscribeEvent

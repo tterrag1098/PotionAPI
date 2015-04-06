@@ -54,6 +54,16 @@ public class EffectUtil
         EffectData.getInstance(entity).addEffect(effect);
     }
 
+    public static void removeEffect(IPotion potion, EntityLivingBase entity)
+    {
+        EffectData.getInstance(entity).removeEffect(potion);
+    }
+    
+    public static void clearEffects(EntityLivingBase entity)
+    {
+        EffectData.getInstance(entity).clearEffects();
+    }
+    
     @SubscribeEvent
     public void onEntityUpdate(LivingUpdateEvent event)
     {
@@ -156,7 +166,7 @@ public class EffectUtil
         syncDataFor(event.player, (EntityPlayerMP) event.player);
     }
 
-    private void syncDataFor(EntityLivingBase entity, EntityPlayerMP to)
+    public static void syncDataFor(EntityLivingBase entity, EntityPlayerMP to)
     {
         EffectData data = EffectData.getInstance(entity);
         if (!data.getActiveEffects().isEmpty())

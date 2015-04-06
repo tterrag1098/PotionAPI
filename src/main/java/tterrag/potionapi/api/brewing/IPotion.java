@@ -118,7 +118,8 @@ public interface IPotion
     void renderHook(EntityPlayer player, PotionData data);
 
     /**
-     * Register and return this potion's icon for inventory rendering.
+     * Register and return this potion's icon for inventory rendering. The icon is stitched to the item sheet, so it must be located in
+     * textures/items.
      * 
      * @param register
      *            The IIconRegister instance

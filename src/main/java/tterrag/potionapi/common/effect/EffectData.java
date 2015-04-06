@@ -52,6 +52,19 @@ public class EffectData implements IExtendedEntityProperties
         }
     }
 
+    public void removeEffect(IPotion potion)
+    {
+        Iterator<Effect> iter = effects.iterator();
+        while (iter.hasNext())
+        {
+            if (iter.next().getPotionData().potion == potion)
+            {
+                iter.remove();
+                return;
+            }
+        }
+    }
+
     public void tickEffects()
     {
         if (entity == null || effects.isEmpty())
@@ -125,6 +138,15 @@ public class EffectData implements IExtendedEntityProperties
     public Collection<Effect> getActiveEffects()
     {
         return effects;
+    }
+
+    public void clearEffects()
+    {
+        for (Effect e : effects)
+        {
+            e.onRemoved(entity);
+        }
+        effects.clear();
     }
 
     public static EffectData getInstance(EntityLivingBase entity)
