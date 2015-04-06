@@ -4,4 +4,3 @@ ___
 
 - Splash potions
 - Particles
-- Improve system to be more similar to vanilla
