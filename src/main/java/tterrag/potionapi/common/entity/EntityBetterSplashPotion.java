@@ -89,11 +89,14 @@ public class EntityBetterSplashPotion extends EntityPotion
                         ItemStack potion = getPotion();
                         PotionData data = ((IPotionItem) potion.getItem()).getData(potion);
                         Effect effect = data.potion.createEffect(data, hitEntity);
-                        effect.setTimeRemaining((int) (effect.getTimeRemaining() * durationMultiplier));
-                        EffectUtil.applyEffect(effect, hitEntity);
-                        EffectUtil.syncDataFor(hitEntity, (EntityPlayerMP) getThrower());
-                        PotionAPI.PACKET_HANDLER.sendToAllAround(new MessageSplashFX(data, posX, posY, posZ), 
-                                new TargetPoint(worldObj.provider.dimensionId, posX, posY, posZ, 16));
+                        if (effect != null)
+                        {
+                            effect.setTimeRemaining((int) (effect.getTimeRemaining() * durationMultiplier));
+                            EffectUtil.applyEffect(effect, hitEntity);
+                            EffectUtil.syncDataFor(hitEntity, (EntityPlayerMP) getThrower());
+                            PotionAPI.PACKET_HANDLER.sendToAllAround(new MessageSplashFX(data, posX, posY, posZ), new TargetPoint(
+                                    worldObj.provider.dimensionId, posX, posY, posZ, 16));
+                        }
                     }
                 }
             }

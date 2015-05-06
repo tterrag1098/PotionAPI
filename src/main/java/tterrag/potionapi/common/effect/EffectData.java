@@ -132,10 +132,15 @@ public class EffectData implements IExtendedEntityProperties
             int time = base.getInteger(TIME_KEY);
             NBTTagCompound potionTag = base.getCompoundTag(POTION_KEY);
             PotionData data = PotionUtil.getDataFromNBT(potionTag);
-            effects.add(new Effect(data, time));
+            Effect effect = data.potion.createEffect(data, entity);
+            if (effect != null)
+            {
+                effect.setTimeRemaining(time);
+                effects.add(effect);
+            }
         }
     }
-    
+
     public Collection<Effect> getActiveEffects()
     {
         return effects;

@@ -139,27 +139,30 @@ public class PotionAPI implements IGuiHandler
                     }
                     int seconds = event.parameters.length > 2 ? CommandBase.parseIntWithMin(event.sender, event.parameters[2], 0) : 30;
                     int level = event.parameters.length > 3 ? CommandBase.parseIntWithMin(event.sender, event.parameters[3], 0) + 1 : 1;
-                    Effect effect = new Effect(new PotionData(potion, level, 1), seconds * 20);
-                    if (seconds > 0)
+                    Effect effect = potion.createEffect(new PotionData(potion, level, 1), player);
+                    if (effect != null)
                     {
-                        CommandBase.func_152373_a(event.sender, event.command, "commands.effect.success",
-                                new ChatComponentText(effect.getLocalizedName()), '"' + potion.getIdentifier() + '"', level,
-                                player.getCommandSenderName(), seconds);
-                        EffectUtil.applyEffect(effect, player);
-                        event.setCanceled(true);
-                    }
-                    else
-                    {
-                        if (EffectData.getPotionData(player, potion) == null)
+                        if (seconds > 0)
                         {
-                            throw new CommandException("commands.effect.failure.notActive", new ChatComponentText(potion.getLocalizedName(effect
-                                    .getPotionData())), player.getCommandSenderName());
+                            CommandBase.func_152373_a(event.sender, event.command, "commands.effect.success",
+                                    new ChatComponentText(effect.getLocalizedName()), '"' + potion.getIdentifier() + '"', level,
+                                    player.getCommandSenderName(), seconds);
+                            EffectUtil.applyEffect(effect, player);
+                            event.setCanceled(true);
                         }
+                        else
+                        {
+                            if (EffectData.getPotionData(player, potion) == null)
+                            {
+                                throw new CommandException("commands.effect.failure.notActive", new ChatComponentText(potion.getLocalizedName(effect
+                                        .getPotionData())), player.getCommandSenderName());
+                            }
 
-                        EffectUtil.removeEffect(potion, player);
-                        CommandBase.func_152373_a(event.sender, event.command, "commands.effect.success.removed",
-                                new ChatComponentText(potion.getLocalizedName(effect.getPotionData())), player.getCommandSenderName());
-                        event.setCanceled(true);
+                            EffectUtil.removeEffect(potion, player);
+                            CommandBase.func_152373_a(event.sender, event.command, "commands.effect.success.removed",
+                                    new ChatComponentText(potion.getLocalizedName(effect.getPotionData())), player.getCommandSenderName());
+                            event.setCanceled(true);
+                        }
                     }
                 }
                 NBTTagCompound tag = new NBTTagCompound();

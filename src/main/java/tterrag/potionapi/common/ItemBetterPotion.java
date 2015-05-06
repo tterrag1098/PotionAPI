@@ -211,10 +211,13 @@ public class ItemBetterPotion extends Item implements IPotionItem
     {
         PotionData data = getData(stack);
         Effect effect = data.potion.createEffect(data, null);
-        String desc = effect.getLocalizedName();
-        desc = EffectUtil.appendLevel(desc, data);
-        desc += " (" + StringUtils.ticksToElapsedTime(getPotion(stack).getTimeForLevel(getPowerLevel(stack), getTimeLevel(stack))) + ")";
-        list.add(desc);
+        if (effect != null)
+        {
+            String desc = effect.getLocalizedName();
+            desc = EffectUtil.appendLevel(desc, data);
+            desc += " (" + StringUtils.ticksToElapsedTime(getPotion(stack).getTimeForLevel(getPowerLevel(stack), getTimeLevel(stack))) + ")";
+            list.add(desc);
+        }
     }
 
     // @SuppressWarnings("rawtypes")
