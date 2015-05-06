@@ -2,5 +2,4 @@
 ___
 ## Todo
 
-- Splash potions
-- Particles
+- Nothing! I think...
