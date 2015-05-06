@@ -53,7 +53,7 @@ public class EntityParticleTransformer implements IClassTransformer
                         if (node instanceof MethodInsnNode && node.getOpcode() == INVOKESTATIC
                                 && ((MethodInsnNode) node).desc.equals("(Ljava/util/Collection;)I"))
                         {
-                            String callMethodClass = "tterrag.potionapi.common.asm.EntityParticleTransformer";
+                            String callMethodClass = "tterrag/potionapi/common/asm/EntityParticleTransformer";
                             String callMethodName = "getColor";
                             String callMethodSig = "(Ljava/util/Collection;Lnet/minecraft/entity/EntityLivingBase;)I";
 
@@ -80,7 +80,7 @@ public class EntityParticleTransformer implements IClassTransformer
     {
         int i = 3694022;
 
-        if (activeEffects != null && !activeEffects.isEmpty())
+        if (activeEffects != null)
         {
             float f = 0.0F;
             float f1 = 0.0F;
@@ -110,7 +110,7 @@ public class EntityParticleTransformer implements IClassTransformer
                     Effect effect = (Effect) iterator.next();
                     int j = effect.getPotionData().potion.getColor(effect.getPotionData());
 
-                    for (int k = 0; k <= effect.getPotionData().powerLevel; ++k)
+                    for (int k = 0; k <= effect.getPotionData().powerLevel - 1; ++k)
                     {
                         f += (float) (j >> 16 & 255) / 255.0F;
                         f1 += (float) (j >> 8 & 255) / 255.0F;

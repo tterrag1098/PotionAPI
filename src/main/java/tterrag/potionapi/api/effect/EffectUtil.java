@@ -1,7 +1,9 @@
 package tterrag.potionapi.api.effect;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Random;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -25,6 +27,7 @@ import org.lwjgl.opengl.GL11;
 
 import tterrag.potionapi.PotionAPI;
 import tterrag.potionapi.api.brewing.IPotion;
+import tterrag.potionapi.common.asm.EntityParticleTransformer;
 import tterrag.potionapi.common.brewing.PotionRegistry;
 import tterrag.potionapi.common.effect.EffectData;
 import tterrag.potionapi.common.effect.MessageEffect;
@@ -57,16 +60,51 @@ public class EffectUtil
     {
         EffectData.getInstance(entity).removeEffect(potion);
     }
-    
+
     public static void clearEffects(EntityLivingBase entity)
     {
         EffectData.getInstance(entity).clearEffects();
     }
-    
+
     @SubscribeEvent
     public void onEntityUpdate(LivingUpdateEvent event)
     {
-        EffectData.getInstance(event.entityLiving).tickEffects();
+        EffectData data = EffectData.getInstance(event.entityLiving);
+        data.tickEffects();
+
+        if (event.entity.worldObj.isRemote)
+        {
+            if (!data.getActiveEffects().isEmpty() && event.entityLiving.getActivePotionEffects().isEmpty())
+            {
+                int color = EntityParticleTransformer.getColor(Collections.EMPTY_LIST, event.entityLiving);
+
+                if (color > 0)
+                {
+                    boolean flag = false;
+                    EntityLivingBase entity = event.entityLiving;
+                    Random rand = entity.worldObj.rand;
+
+                    if (!event.entityLiving.isInvisible())
+                    {
+                        flag = rand.nextBoolean();
+                    }
+                    else
+                    {
+                        flag = rand.nextInt(15) == 0;
+                    }
+
+                    if (flag && color > 0)
+                    {
+                        double d0 = (double) (color >> 16 & 255) / 255.0D;
+                        double d1 = (double) (color >> 8 & 255) / 255.0D;
+                        double d2 = (double) (color >> 0 & 255) / 255.0D;
+                        entity.worldObj.spawnParticle("mobSpell", entity.posX + (rand.nextDouble() - 0.5D) * (double) event.entity.width, entity.posY
+                                + rand.nextDouble() * (double) entity.height - (double) entity.yOffset, entity.posZ + (rand.nextDouble() - 0.5D)
+                                * (double) entity.width, d0, d1, d2);
+                    }
+                }
+            }
+        }
     }
 
     private static final ResourceLocation INVENTORY_TEXTURES = new ResourceLocation("textures/gui/container/inventory.png");
@@ -93,7 +131,7 @@ public class EffectUtil
                 {
                     yOffset = 132 / (totalSize - 1);
                 }
-                
+
                 y += yOffset * (totalSize - 1);
 
                 for (Iterator<Effect> iterator = effects.iterator(); iterator.hasNext(); y += yOffset)
@@ -131,11 +169,11 @@ public class EffectUtil
         }
         return s;
     }
-        
+
     @SubscribeEvent
     public void onPlayerTick(LivingUpdateEvent event)
     {
-        
+
     }
 
     @SubscribeEvent

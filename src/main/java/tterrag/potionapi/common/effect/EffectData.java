@@ -49,6 +49,7 @@ public class EffectData implements IExtendedEntityProperties
         {
             effects.add(effect);
             effect.onApplied(entity);
+            entity.potionsNeedUpdate = true;
         }
     }
 
