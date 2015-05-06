@@ -13,4 +13,8 @@ public interface IPotionItem
     int getPowerLevel(ItemStack stack);
 
     int getTimeLevel(ItemStack stack);
+    
+    PotionData getData(ItemStack potion);
+    
+    boolean isThrowable(ItemStack stack);
 }

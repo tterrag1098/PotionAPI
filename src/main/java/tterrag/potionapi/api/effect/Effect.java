@@ -18,6 +18,11 @@ public class Effect
     {
         return timeRemaining;
     }
+    
+    public void setTimeRemaining(int time)
+    {
+        this.timeRemaining = time;
+    }
 
     public void onUpdate(EntityLivingBase entity)
     {

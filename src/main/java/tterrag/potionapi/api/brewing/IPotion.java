@@ -21,7 +21,7 @@ public interface IPotion
 
     String getLocalizedName(PotionData data);
 
-    int getColor(ItemStack potion);
+    int getColor(PotionData data);
 
     /**
      * If the passed stack is a valid stack this potion can be brewed into. Used for determining validity of items being placed into the GUI.

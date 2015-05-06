@@ -19,6 +19,7 @@ import tterrag.potionapi.api.effect.EffectUtil;
 import tterrag.potionapi.api.effect.PotionData;
 import tterrag.potionapi.api.item.IPotionItem;
 import tterrag.potionapi.common.brewing.PotionRegistry;
+import tterrag.potionapi.common.entity.EntityBetterSplashPotion;
 import tterrag.potionapi.common.util.NBTUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -32,11 +33,14 @@ public class ItemBetterPotion extends Item implements IPotionItem
     @SideOnly(Side.CLIENT)
     private IIcon colorIcon;
 
-    public ItemBetterPotion()
+    private final boolean throwable;
+    
+    public ItemBetterPotion(boolean throwable)
     {
         super();
         setUnlocalizedName("potionapi.potion");
         setCreativeTab(CreativeTabs.tabBrewing);
+        this.throwable = throwable;
     }
 
     @Override
@@ -53,6 +57,7 @@ public class ItemBetterPotion extends Item implements IPotionItem
         PotionUtil.writePotionNBT(NBTUtil.getNBTTag(stack), data);
     }
 
+    @Override
     public PotionData getData(ItemStack stack)
     {
         return PotionUtil.getDataFromNBT(NBTUtil.getNBTTag(stack));
@@ -74,6 +79,12 @@ public class ItemBetterPotion extends Item implements IPotionItem
     public int getTimeLevel(ItemStack stack)
     {
         return PotionUtil.getTimeLevelFromNBT(NBTUtil.getNBTTag(stack));
+    }
+    
+    @Override
+    public boolean isThrowable(ItemStack stack)
+    {
+        return throwable;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -97,13 +108,13 @@ public class ItemBetterPotion extends Item implements IPotionItem
     @Override
     public int getColorFromItemStack(ItemStack stack, int pass)
     {
-        return pass == 1 ? 0xFFFFFF : getPotion(stack).getColor(stack);
+        return pass == 1 ? 0xFFFFFF : getPotion(stack).getColor(getData(stack));
     }
 
     @Override
     public IIcon getIcon(ItemStack stack, int pass)
     {
-        return pass == 0 ? colorIcon : potionIcon;
+        return pass == 0 ? colorIcon : throwable ? splashIcon : potionIcon;
     }
 
     @Override
@@ -151,14 +162,33 @@ public class ItemBetterPotion extends Item implements IPotionItem
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
     {
-        player.setItemInUse(stack, getMaxItemUseDuration(stack));
+        if (isThrowable(stack))
+        {
+            if (!player.capabilities.isCreativeMode)
+            {
+                --stack.stackSize;
+            }
+
+            world.playSoundAtEntity(player, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+
+            if (!world.isRemote)
+            {
+                world.spawnEntityInWorld(new EntityBetterSplashPotion(world, player, stack));
+            }
+
+            return stack;
+        }
+        else
+        {
+            player.setItemInUse(stack, getMaxItemUseDuration(stack));
+        }
         return super.onItemRightClick(stack, world, player);
     }
 
     @Override
     public EnumAction getItemUseAction(ItemStack p_77661_1_)
     {
-        return EnumAction.drink;
+        return isThrowable(p_77661_1_) ? EnumAction.none : EnumAction.drink;
     }
 
     @Override

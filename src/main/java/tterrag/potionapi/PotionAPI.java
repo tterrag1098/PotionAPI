@@ -36,6 +36,8 @@ import tterrag.potionapi.common.TileBetterBrewing;
 import tterrag.potionapi.common.brewing.PotionRegistry;
 import tterrag.potionapi.common.effect.EffectData;
 import tterrag.potionapi.common.effect.MessageEffect;
+import tterrag.potionapi.common.entity.EntityBetterSplashPotion;
+import tterrag.potionapi.common.potions.MessageSplashFX;
 import tterrag.potionapi.common.util.ReplaceUtil;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -46,9 +48,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-
 import static tterrag.potionapi.PotionAPI.*;
 
 @Mod(modid = MODID, name = NAME, version = VERSION, dependencies = "after:ttCore")
@@ -58,7 +60,7 @@ public class PotionAPI implements IGuiHandler
     public static final String NAME = "PotionAPI";
     public static final String VERSION = "@VERSION@";
 
-    public static Item potion;
+    public static Item potion, potionThrowable;
     public static Block brewingStand;
 
     @Instance
@@ -76,11 +78,16 @@ public class PotionAPI implements IGuiHandler
         MinecraftForge.EVENT_BUS.register(new ReplaceUtil());
         EffectUtil.INSTANCE.register();
         NetworkRegistry.INSTANCE.registerGuiHandler(this, INSTANCE);
+        
+        proxy.registerRenderers();
 
         PACKET_HANDLER.registerMessage(MessageEffect.Handler.class, MessageEffect.class, 0, Side.CLIENT);
+        PACKET_HANDLER.registerMessage(MessageSplashFX.Handler.class, MessageSplashFX.class, 1, Side.CLIENT);
 
-        potion = new ItemBetterPotion();
+        potion = new ItemBetterPotion(false);
         GameRegistry.registerItem(potion, "potion");
+        potionThrowable = new ItemBetterPotion(true);
+        GameRegistry.registerItem(potionThrowable, "potionThrowable");
 
         brewingStand = new BlockBetterBrewing();
         Blocks.brewing_stand = brewingStand;
@@ -88,6 +95,8 @@ public class PotionAPI implements IGuiHandler
         ReplaceUtil.overwriteEntry(Block.blockRegistry, "minecraft:brewing_stand", brewingStand);
 
         GameRegistry.registerTileEntity(TileBetterBrewing.class, "tileBetterBrewing");
+
+        EntityRegistry.registerModEntity(EntityBetterSplashPotion.class, "betterSplash", 0, INSTANCE, 64, 10, true);
 
         IPotion leaping = new PotionLeaping();
         MinecraftForge.EVENT_BUS.register(leaping);

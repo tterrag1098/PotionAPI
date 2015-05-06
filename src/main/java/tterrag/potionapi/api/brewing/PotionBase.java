@@ -40,7 +40,7 @@ public abstract class PotionBase implements IPotion
     }
 
     @Override
-    public int getColor(ItemStack potion)
+    public int getColor(PotionData potion)
     {
         return color;
     }

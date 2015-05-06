@@ -33,7 +33,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class EffectUtil
 {
@@ -134,7 +133,7 @@ public class EffectUtil
     }
         
     @SubscribeEvent
-    public void onPlayerTick(PlayerTickEvent event)
+    public void onPlayerTick(LivingUpdateEvent event)
     {
         
     }
